@@ -3344,12 +3344,23 @@ function initWallpanel() {
 					controls: false
 				});
 
-				return new Promise((resolve) => {
+				return new Promise((resolve, reject) => {
+					let attempts = 0;
+					const maxAttempts = 20;
 					async function onLoad(evt) {
 						const el = evt.currentTarget;
 						el.removeEventListener("load", onLoad);
 						await el.updateComplete;
 						const [player, video] = getHaCameraStreamPlayerAndVideo(el);
+						if (!player || !video) {
+							attempts++;
+							if (attempts <= maxAttempts) {
+								setTimeout(() => onLoad(evt), 100);
+								return;
+							}
+							reject(new Error("Failed to initialize camera stream player"));
+							return;
+						}
 						player.style.height = "100%";
 						video.autoplay = false;
 						video.muted = false;
