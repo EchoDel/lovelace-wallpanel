@@ -1157,6 +1157,8 @@ function initWallpanel() {
 			this.disable_screensaver_on_browser_mod_popup_function = null;
 			this.moreInfoDialogOpenedAt = 0;
 			this.timerInterval = null;
+			this.windowEventHandlers = [];
+			this.infoBoxResizeObserver = null;
 
 			this.screenWakeLock = new ScreenWakeLock();
 			this.cameraMotionDetection = new CameraMotionDetection();
@@ -2157,25 +2159,27 @@ function initWallpanel() {
 			if (config.stop_screensaver_on_mouse_move) {
 				eventNames.push("mousemove");
 			}
+			const interactionHandler = (event) => {
+				try {
+					wp.handleInteractionEvent(event);
+				} catch (error) {
+					logger.error(error.stack);
+				}
+			};
 			eventNames.forEach(function (eventName) {
-				window.addEventListener(
-					eventName,
-					(event) => {
-						try {
-							wp.handleInteractionEvent(event);
-						} catch (error) {
-							logger.error(error.stack);
-						}
-					},
-					{ capture: true }
-				);
+				window.addEventListener(eventName, interactionHandler, true);
+				wp.windowEventHandlers.push({ eventName, handler: interactionHandler, options: true });
 			});
-			window.addEventListener("contextmenu", (event) => {
+
+			const contextMenuHandler = (event) => {
 				if (config.disable_context_menu && wp.screensaverRunning()) {
 					event.preventDefault();
 				}
-			});
-			window.addEventListener("resize", () => {
+			};
+			window.addEventListener("contextmenu", contextMenuHandler);
+			this.windowEventHandlers.push({ eventName: "contextmenu", handler: contextMenuHandler });
+
+			const resizeHandler = () => {
 				try {
 					const width = this.screensaverContainer.clientWidth;
 					const height = this.screensaverContainer.clientHeight;
@@ -2189,8 +2193,11 @@ function initWallpanel() {
 				} catch (error) {
 					logger.error(error.stack);
 				}
-			});
-			window.addEventListener("hass-more-info", () => {
+			};
+			window.addEventListener("resize", resizeHandler);
+			this.windowEventHandlers.push({ eventName: "resize", handler: resizeHandler });
+
+			const hassMoreInfoHandler = () => {
 				try {
 					if (wp.screensaverRunning()) {
 						wp.moreInfoDialogToForeground();
@@ -2198,14 +2205,17 @@ function initWallpanel() {
 				} catch (error) {
 					logger.error(error.stack);
 				}
-			});
-			const infoBoxResizeObserver = new ResizeObserver(() => {
+			};
+			window.addEventListener("hass-more-info", hassMoreInfoHandler);
+			this.windowEventHandlers.push({ eventName: "hass-more-info", handler: hassMoreInfoHandler });
+
+			this.infoBoxResizeObserver = new ResizeObserver(() => {
 				if (config.info_move_pattern === "corners") {
 					// Correct position
 					this.moveAroundCorners(true);
 				}
 			});
-			infoBoxResizeObserver.observe(this.infoBoxContent);
+			this.infoBoxResizeObserver.observe(this.infoBoxContent);
 
 			// Correct possibly incorrect entity state
 			this.setScreensaverEntityState();
@@ -2215,6 +2225,16 @@ function initWallpanel() {
 			if (this.timerInterval) {
 				clearInterval(this.timerInterval);
 				this.timerInterval = null;
+			}
+			if (this.windowEventHandlers.length) {
+				this.windowEventHandlers.forEach(({ eventName, handler, options }) => {
+					window.removeEventListener(eventName, handler, options);
+				});
+				this.windowEventHandlers = [];
+			}
+			if (this.infoBoxResizeObserver) {
+				this.infoBoxResizeObserver.disconnect();
+				this.infoBoxResizeObserver = null;
 			}
 		}
 
