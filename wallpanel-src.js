@@ -833,7 +833,7 @@ function updateConfig() {
 
 function getActiveBrowserModPopups() {
 	const popups = [];
-	if (!browserId) {
+	if (!browserId || !elHass || !elHass.shadowRoot) {
 		return popups;
 	}
 	elHass.shadowRoot.querySelectorAll("*").forEach((el) => {
