@@ -4077,11 +4077,13 @@ function initWallpanel() {
 						html += `<b>Media info:</b> ${JSON.stringify(mediaInfo)}<br/>`;
 					}
 				}
-				this.debugBox.innerHTML = html;
-				this.debugBox.querySelector("#download_log").addEventListener("click", function (event) {
-					logger.downloadMessages();
-					event.preventDefault();
-				});
+				if (this.debugBox.innerHTML !== html) {
+					this.debugBox.innerHTML = html;
+					this.debugBox.querySelector("#download_log").addEventListener("click", function (event) {
+						logger.downloadMessages();
+						event.preventDefault();
+					});
+				}
 				this.debugBox.scrollTop = this.debugBox.scrollHeight;
 			}
 			if (this.screenWakeLock.enabled && now - this.screensaverStartedAt >= config.keep_screen_on_time * 1000) {
