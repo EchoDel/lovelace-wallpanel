@@ -3372,10 +3372,6 @@ function initWallpanel() {
 							reject(new Error("Failed to initialize camera stream player"));
 							return;
 						}
-						if (video.readyState >= video.HAVE_ENOUGH_DATA) {
-							resolve(el);
-							return;
-						}
 						player.style.height = "100%";
 						video.autoplay = false;
 						video.muted = false;
