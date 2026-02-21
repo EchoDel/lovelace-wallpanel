@@ -3509,8 +3509,9 @@ function initWallpanel() {
 				// Make sure the "Keep WiFi on during sleep" option is enabled.
 				// Set your WiFi connection to "not metered".
 				logger.error(`Failed to update media from ${element.mediaUrl}:`, error);
+			} finally {
+				this.updatingMedia = false;
 			}
-			this.updatingMedia = false;
 			return element;
 		}
 
