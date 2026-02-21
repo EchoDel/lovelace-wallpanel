@@ -775,6 +775,12 @@ function updateConfig() {
 	for (let [key, value] of params) {
 		if (key.startsWith("wp_")) {
 			key = key.substring(3);
+			if (renamedConfigOptions[key]) {
+				logger.warn(
+					`The configuration option '${key}' has been renamed to '${renamedConfigOptions[key]}'. Please update your wallpanel configuration accordingly.`
+				);
+				key = renamedConfigOptions[key];
+			}
 			if (key in defaultConfig && value) {
 				// Convert to the right type
 				try {
