@@ -429,6 +429,10 @@ class ScreenWakeLock {
 	enable() {
 		if (this.nativeWakeLockSupported) {
 			logger.debug("Requesting native screen wakelock");
+			if (this._lock) {
+				logger.debug("Screen wakelock already active");
+				return;
+			}
 			navigator.wakeLock
 				.request("screen")
 				.then((wakeLock) => {
