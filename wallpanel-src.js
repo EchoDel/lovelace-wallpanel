@@ -3121,6 +3121,10 @@ function initWallpanel() {
 									URL.revokeObjectURL(elem.src);
 								}
 								elem.src = URL.createObjectURL(blob);
+							})
+							.catch((error) => {
+								logger.warning(`Failed to stream-load ${elem.tagName} "${url}": ${error}`);
+								onError();
 							});
 					} else {
 						headers = headers || {};
