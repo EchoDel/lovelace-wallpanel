@@ -474,6 +474,10 @@ class ScreenWakeLock {
 		if (this.nativeWakeLockSupported) {
 			logger.debug("Releasing native screen wakelock");
 			if (this._lock) {
+					if (this._onWakeLockRelease) {
+						this._lock.removeEventListener("release", this._onWakeLockRelease);
+						this._onWakeLockRelease = null;
+					}
 				this._lock.release();
 			}
 			this._lock = null;
