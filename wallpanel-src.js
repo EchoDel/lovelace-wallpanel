@@ -516,6 +516,7 @@ class CameraMotionDetection {
 		document.body.appendChild(this.canvasElement);
 
 		this.context = this.canvasElement.getContext("2d", { willReadFrequently: true });
+		this._elementsAppended = true;
 	}
 
 	capture() {
@@ -575,6 +576,12 @@ class CameraMotionDetection {
 			this.error = true;
 			logger.error("No media devices found");
 			return;
+		}
+
+		if (!this._elementsAppended) {
+			document.body.appendChild(this.videoElement);
+			document.body.appendChild(this.canvasElement);
+			this._elementsAppended = true;
 		}
 
 		this.enabled = true;
@@ -642,6 +649,11 @@ class CameraMotionDetection {
 			});
 		}
 		this.videoElement.srcObject = null;
+		if (this._elementsAppended) {
+			this.videoElement.remove();
+			this.canvasElement.remove();
+			this._elementsAppended = false;
+		}
 	}
 }
 
