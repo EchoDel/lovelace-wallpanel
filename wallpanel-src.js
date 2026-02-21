@@ -740,7 +740,22 @@ function updateConfig() {
 				} catch {
 					// Invalid JSON, just take the string
 				}
-				paramConfig[key] = defaultConfig[key].constructor(value);
+				const defaultValue = defaultConfig[key];
+				if (Array.isArray(defaultValue)) {
+					if (Array.isArray(value)) {
+						paramConfig[key] = value;
+					} else if (typeof value === "string") {
+						paramConfig[key] = value.split(",").map((item) => item.trim());
+					} else {
+						paramConfig[key] = [value];
+					}
+				} else if (typeof defaultValue === "boolean") {
+					paramConfig[key] = ["true", "on", "yes", "1"].includes(String(value));
+				} else if (typeof defaultValue === "number") {
+					paramConfig[key] = Number(value);
+				} else {
+					paramConfig[key] = value;
+				}
 			}
 		}
 	}
