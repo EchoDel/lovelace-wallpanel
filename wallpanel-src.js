@@ -3,7 +3,7 @@
  * Released under the GNU General Public License v3.0
  */
 
-const version = "4.62.2";
+const version = "4.62.3";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_views: [],
@@ -478,10 +478,10 @@ class ScreenWakeLock {
 		if (this.nativeWakeLockSupported) {
 			logger.debug("Releasing native screen wakelock");
 			if (this._lock) {
-					if (this._onWakeLockRelease) {
-						this._lock.removeEventListener("release", this._onWakeLockRelease);
-						this._onWakeLockRelease = null;
-					}
+				if (this._onWakeLockRelease) {
+					this._lock.removeEventListener("release", this._onWakeLockRelease);
+					this._onWakeLockRelease = null;
+				}
 				this._lock.release();
 			}
 			this._lock = null;
@@ -3234,10 +3234,6 @@ function initWallpanel() {
 									URL.revokeObjectURL(elem.src);
 								}
 								elem.src = URL.createObjectURL(blob);
-							})
-							.catch((error) => {
-								logger.warning(`Failed to stream-load ${elem.tagName} "${url}": ${error}`);
-								onError();
 							});
 					} else {
 						headers = headers || {};
