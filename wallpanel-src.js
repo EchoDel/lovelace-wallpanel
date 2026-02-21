@@ -2286,6 +2286,10 @@ function initWallpanel() {
 				clearInterval(this.timerInterval);
 				this.timerInterval = null;
 			}
+			if (this.translateTimeout) {
+				clearTimeout(this.translateTimeout);
+				this.translateTimeout = null;
+			}
 			if (this.windowEventHandlers.length) {
 				this.windowEventHandlers.forEach(({ eventName, handler, options }) => {
 					window.removeEventListener(eventName, handler, options);
@@ -3439,6 +3443,18 @@ function initWallpanel() {
 					if (inactiveElement.tagName.toLowerCase() === "video") {
 						try {
 							inactiveElement.pause();
+						} catch (e) {
+							logger.debug(e);
+						}
+					} else if (inactiveElement.tagName.toLowerCase() === "ha-camera-stream") {
+						try {
+							const [player, video] = getHaCameraStreamPlayerAndVideo(inactiveElement);
+							if (video) {
+								video.pause();
+							}
+							if (player && typeof player.stop === "function") {
+								player.stop();
+							}
 						} catch (e) {
 							logger.debug(e);
 						}
