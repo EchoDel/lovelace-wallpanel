@@ -404,6 +404,10 @@ class ScreenWakeLock {
 			// Do not set muted to true or the following error can occur:
 			// Uncaught (in promise) DOMException: The play() request was interrupted because video-only background media was paused to save power. https://goo.gl/LdLk22
 			this._player.setAttribute("muted", "");
+			this._player.style.display = "none";
+			if (!document.getElementById("ScreenWakeLockVideo")) {
+				document.body.appendChild(this._player);
+			}
 			this._player.addEventListener("ended", () => {
 				logger.debug("Video ended");
 				if (this.enabled) {
