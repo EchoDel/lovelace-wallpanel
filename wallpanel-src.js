@@ -3320,7 +3320,7 @@ function initWallpanel() {
 						video.volume = config.video_volume;
 						video.style.maxHeight = "100%";
 						video.style.height = "100%";
-						if (video.readyState >= element.HAVE_ENOUGH_DATA) {
+						if (video.readyState >= video.HAVE_ENOUGH_DATA) {
 							resolve(el);
 						} else {
 							const onCanPlay = () => {
