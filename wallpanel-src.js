@@ -485,6 +485,7 @@ class CameraMotionDetection {
 		this.motionActive = false;
 		this.motionStopDelay = 2000; // ms (default)
 		this.motionStopTimeout = null;
+		this.captureTimer = null;
 
 		this.videoElement = document.createElement("video");
 		this.videoElement.setAttribute("id", "wallpanelMotionDetectionVideo");
@@ -593,7 +594,7 @@ class CameraMotionDetection {
 				this.videoElement.srcObject = stream;
 				this.videoElement.play();
 				if (this.enabled) {
-					setInterval(this.capture.bind(this), this.captureInterval);
+					this.captureTimer = setInterval(this.capture.bind(this), this.captureInterval);
 				}
 			})
 			.catch((err) => {
@@ -606,6 +607,10 @@ class CameraMotionDetection {
 			return;
 		}
 		this.enabled = false;
+		if (this.captureTimer) {
+			clearInterval(this.captureTimer);
+			this.captureTimer = null;
+		}
 		this.videoElement.pause();
 		this.videoElement.srcObject.getTracks().forEach((track) => {
 			track.stop();
