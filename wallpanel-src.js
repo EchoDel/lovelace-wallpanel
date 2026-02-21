@@ -4224,9 +4224,9 @@ function initWallpanel() {
 					return;
 				}
 				let elements = [];
-				elements = elements.concat(this.__cards);
-				elements = elements.concat(this.__badges);
-				elements = elements.concat(this.__views);
+				elements = elements.concat(this.__cards || []);
+				elements = elements.concat(this.__badges || []);
+				elements = elements.concat(this.__views || []);
 				elements.push(this.shadowRoot.getElementById("wallpanel-screensaver-info-box-content"));
 				elements.push(this.shadowRoot.getElementById("wallpanel-screensaver-fixed-info-box-content"));
 				if (config.image_info_template == "analyze") {
