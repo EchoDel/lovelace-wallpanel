@@ -628,7 +628,13 @@ class CameraMotionDetection {
 				}
 			})
 			.catch((err) => {
+				this.enabled = false;
 				logger.error("Camera motion detection error:", err);
+				if (this._elementsAppended) {
+					this.videoElement.remove();
+					this.canvasElement.remove();
+					this._elementsAppended = false;
+				}
 			});
 	}
 
