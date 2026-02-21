@@ -678,7 +678,11 @@ function mergeConfig(target, ...sources) {
 						val = val.replace(/\$\{entity:\s*([^}]+\.[^}]+)\}/g, replacer);
 					}
 					if (typeof target[key] === "boolean") {
-						val = ["true", "on", "yes", "1"].includes(val.toString());
+						if (val === null || val === undefined) {
+							val = false;
+						} else {
+							val = ["true", "on", "yes", "1"].includes(String(val));
+						}
 					}
 					return val;
 				}
