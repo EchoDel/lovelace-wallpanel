@@ -3073,6 +3073,12 @@ function initWallpanel() {
 					if (config.stream_load_media) {
 						fetch(url, { headers: headers })
 							.then((response) => {
+								if (!response.ok) {
+									throw new Error(`Failed to load ${elem.tagName} "${url}": ${response}`);
+								}
+								if (!response.body) {
+									throw new Error(`Failed to load ${elem.tagName} "${url}": empty body`);
+								}
 								const reader = response.body.getReader();
 								return new ReadableStream({
 									start(controller) {
@@ -3094,7 +3100,12 @@ function initWallpanel() {
 							})
 							.then((stream) => new Response(stream))
 							.then((response) => response.blob())
-							.then((blob) => (elem.src = URL.createObjectURL(blob)));
+							.then((blob) => {
+								if (typeof elem.src === "string" && elem.src.startsWith("blob:")) {
+									URL.revokeObjectURL(elem.src);
+								}
+								elem.src = URL.createObjectURL(blob);
+							});
 					} else {
 						headers = headers || {};
 						const response = await fetch(url, { headers: headers });
