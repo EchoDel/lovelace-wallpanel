@@ -1197,7 +1197,7 @@ function initWallpanel() {
 			this.lastProfileSet = config.profile;
 			this.lastMove = null;
 			this.lastCorner = 0; // 0 - top left, 1 - bottom left, 2 - bottom right, 3 - top right
-			this.translateInterval = null;
+			this.translateTimeout = null;
 			this.lastClickTime = 0;
 			this.clickCount = 0;
 			this.touchStartX = -1;
@@ -1766,10 +1766,10 @@ function initWallpanel() {
 			if (ms < 0) {
 				ms = 0;
 			}
-			if (wp.translateInterval) {
-				clearInterval(wp.translateInterval);
+			if (wp.translateTimeout) {
+				clearTimeout(wp.translateTimeout);
 			}
-			wp.translateInterval = setInterval(function () {
+			wp.translateTimeout = setTimeout(function () {
 				wp.infoBoxPosX.style.transform = `translate3d(${x}px, 0, 0)`;
 				wp.infoBoxPosY.style.transform = `translate3d(0, ${y}px, 0)`;
 			}, ms);
@@ -2356,10 +2356,15 @@ function initWallpanel() {
 			}
 
 			if (config.disable_screensaver_on_browser_mod_popup_func) {
-				this.disable_screensaver_on_browser_mod_popup_function = new Function(
-					"bmp",
-					config.disable_screensaver_on_browser_mod_popup_func
-				);
+				try {
+					this.disable_screensaver_on_browser_mod_popup_function = new Function(
+						"bmp",
+						config.disable_screensaver_on_browser_mod_popup_func
+					);
+				} catch (error) {
+					this.disable_screensaver_on_browser_mod_popup_function = null;
+					logger.error("Invalid disable_screensaver_on_browser_mod_popup_func:", error);
+				}
 			}
 			if (isActive() && config.camera_motion_detection_enabled) {
 				this.cameraMotionDetection.start();
