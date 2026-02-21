@@ -735,7 +735,7 @@ function mergeConfig(target, ...sources) {
 						if (val === null || val === undefined) {
 							val = false;
 						} else {
-							val = ["true", "on", "yes", "1"].includes(String(val));
+							val = ["true", "on", "yes", "1"].includes(String(val).toLowerCase());
 						}
 					}
 					return val;
