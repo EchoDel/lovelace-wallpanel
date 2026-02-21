@@ -2047,6 +2047,10 @@ function initWallpanel() {
 			this.style.opacity = 0;
 			this.style.position = "fixed";
 
+			if (!this.timerInterval) {
+				this.timerInterval = setInterval(this.timer.bind(this), 1000);
+			}
+
 			this.messageContainer = document.createElement("div");
 			this.messageContainer.id = "wallpanel-message-container";
 
