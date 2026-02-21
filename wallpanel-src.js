@@ -794,7 +794,12 @@ function updateConfig() {
 				} else if (typeof defaultValue === "boolean") {
 					paramConfig[key] = ["true", "on", "yes", "1"].includes(String(value));
 				} else if (typeof defaultValue === "number") {
-					paramConfig[key] = Number(value);
+					const num = Number(value);
+					if (Number.isFinite(num)) {
+						paramConfig[key] = num;
+					} else {
+						logger.warn(`Invalid numeric wp_ param '${key}': ${value}`);
+					}
 				} else {
 					paramConfig[key] = value;
 				}
